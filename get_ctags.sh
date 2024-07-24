@@ -7,8 +7,14 @@ if [ -d ./src ]; then
 	fi
 
 	cd ./misc
-	ctags ../src/*.c
-	ctags -a ../src/*/*.c 2>/dev/null
+	find .. -type f -name "*.c" \
+		-exec ctags -adtw {} \; \
+	&& \
+	find .. -type f -name "*.h" \
+		-exec sed -i="" 's/# define/#define/g' {} \; \
+		-exec ctags -adtw {} \; \
+		-exec sed -i="" 's/#define/# define/g' {} \; \
+	&& \
 	echo "Tags file created"
 	cd ..
 

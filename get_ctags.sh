@@ -2,20 +2,17 @@
 
 if [ -d ./src ]; then
 
-	if [ ! -d ./misc ]; then
-		mkdir -p misc
-	fi
-
+	[ ! -d ./misc ] && mkdir -p misc
 	cd ./misc
-	find .. -type f -name "*.c" \
-		-exec ctags -adtw {} \; \
-	&& \
-	find .. -type f -name "*.h" \
+	[ -f tags ] && rm tags
+
+	find .. -type f \( -name "*.c" -o -name "*.h" \) \
 		-exec sed -i="" 's/# define/#define/g' {} \; \
 		-exec ctags -adtw {} \; \
 		-exec sed -i="" 's/#define/# define/g' {} \; \
 	&& \
 	echo "Tags file created"
+
 	cd ..
 
 else

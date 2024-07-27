@@ -9,8 +9,10 @@ if [ -d ./src ]; then
 	find .. -type f \( -name "*.c" -o -name "*.h" \) \
 		-exec sed -i "" 's/# define/#define/g' {} \; \
 		-exec ctags -adtw {} \; \
-		-exec sed -i "" 's/#define/# define/g' {} \; \
-	&& \
+		-exec sed -i "" 's/#define/# define/g' {} \;
+
+	sort tags -o tags
+
 	echo "Tags file created"
 
 	cd ..

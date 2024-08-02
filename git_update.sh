@@ -7,9 +7,8 @@ git_fetch_and_status () {
 	echo ""
 	echo "-----------------------------------------------"
 	echo "$PWD"
+
 	echo "Fetching changes from remote"
-	#Execute git fetch and git status
-	#echo "Fetching data from remote..."
 	git fetch
 	echo ""
 
@@ -19,12 +18,9 @@ git_fetch_and_status () {
 		echo -e "${red}You are not up to date${white}"
 	fi
 
-	#Return to the parent directory
 	echo "$PWD"
-	#else
-	#	echo "Not a GIT directory: $dir"
 	echo "-----------------------------------------------"
-
+	echo ""
 }
 
 if [ -d .git ]; then
@@ -34,11 +30,9 @@ else
 	for dir in */; do
 		# Check if the directory contains a .git folder
 		if [ -d $dir/.git ]; then
-		cd $dir
-		git_fetch_and_status
-		cd ..
+			cd $dir
+			git_fetch_and_status
+			cd ..
 		fi
 	done
 fi
-
-echo ""

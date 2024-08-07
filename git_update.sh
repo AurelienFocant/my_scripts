@@ -14,7 +14,7 @@ git_fetch_and_status () {
 
 	echo "Checking git status..."
 	git status -v
-	if git status -v | grep --quiet "behind\|ahead"; then
+	if git status -v | grep --quiet "behind\|ahead\|diverged"; then
 		echo -e "${red}You are not up to date${white}"
 	fi
 

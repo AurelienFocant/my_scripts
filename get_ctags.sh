@@ -7,12 +7,12 @@ if [ -d ./src ]; then
 	[ -f tags ] && rm tags
 
 if uname | grep --quiet Linux; then
-	find .. -type f \( -name "*.c" -o -name "*.h" \) \
+	find -L .. -type f \( -name "*.c" -o -name "*.h" \) \
 		-exec sed -i 's/# define/#define/g' {} \; \
 		-exec ctags -a {} \; \
 		-exec sed -i 's/#define/# define/g' {} \;
 else
-	find .. -type f \( -name "*.c" -o -name "*.h" \) \
+	find -L .. -type f \( -name "*.c" -o -name "*.h" \) \
 		-exec sed -i "" 's/# define/#define/g' {} \; \
 		-exec ctags -adtw {} \; \
 		-exec sed -i "" 's/#define/# define/g' {} \;

@@ -12,7 +12,8 @@ if [ -d  $src_dir ]; then
 		'echo "\n/*----------------  ${1##*/}  ---------------*/"; \
 		grep -E "^[[:space:]]*([a-zA-Z_*]+[[:space:]]+){1,2}[a-zA-Z_*]+\([^\)]*\)" $1 \
 		| grep -vE "^[[:space:]]*static[[:space:]]+" \
-		| sed "s/$/;/";' \
+		| grep -vE "[[:space:]]*main\(" \
+		| sed "s/$/:;/";' \
 		_ {} \; \
 	   	>>includes/prototypes.h 2>/dev/null
 

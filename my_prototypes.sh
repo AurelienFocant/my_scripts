@@ -1,11 +1,14 @@
 #!/bin/bash
 
 src_dir="./src"
+inc_dir="./includes"
+project=$(echo "${PWD##*/}" | sed -E 's/[1-9]_//g')
+header_f="${inc_dir}/prototypes_${project}"
 
 if [ -d  $src_dir ]; then 
 
-	[ ! -d includes ] && mkdir includes
-	echo "${PWD##*/}" | sed -E 's/[1-9]_//g' | awk '{print "#include " "\"" $0 ".h\""}' >includes/prototypes.h
+	[ ! -d ${inc_dir} ] && mkdir ${inc_dir}
+	echo ${project} | awk '{print "#include " "\"" $0 ".h\""}' >${header_f}.h
 
 	find $src_dir -type f -name "*.c" \
 		-exec sh -c \
@@ -13,10 +16,32 @@ if [ -d  $src_dir ]; then
 		grep -E "^[[:space:]]*([a-zA-Z_*]+[[:space:]]+){1,2}[a-zA-Z_*]+\([^\)]*\)" $1 \
 		| grep -vE "^[[:space:]]*static[[:space:]]+" \
 		| grep -vE "[[:space:]]*main\(" \
-		| sed "s/$/:;/";' \
+		| sed "s/$/;/";' \
 		_ {} \; \
-	   	>>includes/prototypes.h 2>/dev/null
+	   	>>${header_f}.h 2>/dev/null
 
 else
-	echo "You are not in a valid project directory"
+	echo "There is no src directory"
+fi
+
+src_dir="./src_bonus"
+inc_dir="./includes_bonus"
+
+if [ -d  $src_dir ]; then 
+
+	[ ! -d ${inc_dir} ] && mkdir ${inc_dir}
+	echo ${project} | awk '{print "#include " "\"" $0 ".h\""}' >${header_f}_bonus.h
+
+	find $src_dir -type f -name "*.c" \
+		-exec sh -c \
+		'echo "\n/*----------------  ${1##*/}  ---------------*/"; \
+		grep -E "^[[:space:]]*([a-zA-Z_*]+[[:space:]]+){1,2}[a-zA-Z_*]+\([^\)]*\)" $1 \
+		| grep -vE "^[[:space:]]*static[[:space:]]+" \
+		| grep -vE "[[:space:]]*main\(" \
+		| sed "s/$/;/";' \
+		_ {} \; \
+	   	>>${header_f}_bonus.h 2>/dev/null
+
+else
+	echo "There is no src_bonus directory"
 fi

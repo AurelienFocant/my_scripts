@@ -1,19 +1,22 @@
 #!/bin/bash
 
-project=$(echo "${PWD##*/}" | sed -E 's/[1-9]_//g')
-#src_dir="./src"
 inc_dir="./includes"
-header_file="${inc_dir}/prototypes_${project}"
+project=$(echo "${PWD##*/}" | sed -E 's/[1-9]_//g')
+name="prototypes_${project}"
+header_file="${inc_dir}/${name}"
+header_upper=$(echo ${name} | awk '{print toupper($0) }')
 
 src_dir="$1"
-if [ -z "$dir" ]; then
+if [ -z "$src_dir" ]; then
 	src_dir="./src"
 fi
 
 if [ -d  $src_dir ]; then 
 
 	[ ! -d ${inc_dir} ] && mkdir ${inc_dir}
-	echo ${project} | awk '{print "#include " "\"" $0 ".h\""}' >${header_file}.h
+	printf "#ifndef ${header_upper}_H\n# define ${header_upper}_H\n\n" >${header_file}.h
+
+	printf ${project} | awk '{print "# include " "\"" $0 ".h\""}' >>${header_file}.h
 
 	find $src_dir -type f -name "*.c" \
 		-exec sh -c \
@@ -24,6 +27,8 @@ if [ -d  $src_dir ]; then
 		| sed "s/$/;/";' \
 		_ {} \; \
 		>>${header_file}.h 2>/dev/null
+
+	printf "\n#endif\n" >>${header_file}.h
 
 else
 	echo "There is no src directory"

@@ -14,7 +14,7 @@ if [ -d $src_dir ]; then
 	cd ./misc
 	[ -f tags ] && rm tags
 
-	if uname | grep --quiet Linux; then
+	if ctags --version | grep --quiet Exuberant; then
 		find -L ../${inc_dir} ../${src_dir} ../${libft_dir} -type f \( -name "*.c" -o -name "*.h" \) \
 			-exec ctags -a {} \;
 	else

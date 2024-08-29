@@ -24,7 +24,7 @@ if [ -d $src_dir ]; then
 			-exec sed -i "" 's/#define/# define/g' {} \;
 	fi
 
-	sort tags -o tags
+	[ -f tags ] && sort tags -o tags || echo "Tags creation has failed"
 	cd ..
 
 else

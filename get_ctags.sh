@@ -14,14 +14,14 @@ if [ -d $src_dir ]; then
 	cd ./misc
 	[ -f tags ] && rm tags
 
-	if ! ctags --version 2>/dev/null; then
+	if ctags --version 2>/dev/null | grep --quiet Exuberant; then
+		find -L ../${inc_dir} ../${src_dir} ../${libft_dir} -type f \( -name "*.c" -o -name "*.h" \) \
+			-exec ctags -a {} \;
+	elif ! ctags --version 2>/dev/null; then
 		find -L ../${inc_dir} ../${src_dir} ../${libft_dir}  -type f \( -name "*.c" -o -name "*.h" \) \
 			-exec sed -i "" 's/# define/#define/g' {} \; \
 			-exec ctags -adtw {} \; \
 			-exec sed -i "" 's/#define/# define/g' {} \;
-	elif ctags --version 2>/dev/null | grep --quiet Exuberant; then
-		find -L ../${inc_dir} ../${src_dir} ../${libft_dir} -type f \( -name "*.c" -o -name "*.h" \) \
-			-exec ctags -a {} \;
 	fi
 
 	sort tags -o tags

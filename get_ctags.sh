@@ -5,6 +5,9 @@ if [ -z "$src_dir" ]; then
 	src_dir="src"
 fi
 
+inc_dir="includes"
+libft_dir="libft"
+
 if [ -d $src_dir ]; then
 
 	[ ! -d ./misc ] && mkdir -p misc
@@ -12,21 +15,16 @@ if [ -d $src_dir ]; then
 	[ -f tags ] && rm tags
 
 	if uname | grep --quiet Linux; then
-		find -L ../includes ../${src_dir} -type f \( -name "*.c" -o -name "*.h" \) \
-			-exec sed -i 's/# define/#define/g' {} \; \
-			-exec ctags -a {} \; \
-			-exec sed -i 's/#define/# define/g' {} \;
+		find -L ../${inc_dir} ../${src_dir} ../${libft_dir} -type f \( -name "*.c" -o -name "*.h" \) \
+			-exec ctags -a {} \;
 	else
-		find -L ../includes ../${src_dir} -type f \( -name "*.c" -o -name "*.h" \) \
+		find -L ../${inc_dir} ../${src_dir} ../${libft_dir}  -type f \( -name "*.c" -o -name "*.h" \) \
 			-exec sed -i "" 's/# define/#define/g' {} \; \
 			-exec ctags -adtw {} \; \
 			-exec sed -i "" 's/#define/# define/g' {} \;
 	fi
 
 	sort tags -o tags
-
-	echo "Tags file created"
-
 	cd ..
 
 else

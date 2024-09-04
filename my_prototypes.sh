@@ -18,14 +18,15 @@ if [ -d  $src_dir ]; then
 
 	printf ${project} | awk '{print "# include " "\"" $0 ".h\""}' >>${header_file}.h
 
+# the rexeg doesnt work if theres a \n in the function name ---> norminette
 	find $src_dir -type f -name "*.c" \
 		-exec sh -c \
-		'echo "\n/*----------------  ${1##*/}  ---------------*/"; \
-		grep -E "^[[:space:]]*([a-zA-Z_*]+[[:space:]]+){1,2}[a-zA-Z_*]+\([^\)]*\)" $1 \
-		| grep -vE "^[[:space:]]*static[[:space:]]+" \
-		| grep -vE "[[:space:]]*main\(" \
-		| sed "s/$/;/";' \
-		_ {} \; \
+			'echo "\n/*----------------  ${1##*/}  ---------------*/"; \
+			grep -E "^[[:space:]]*([a-zA-Z_*]+[[:space:]]+){1,2}[a-zA-Z_*]+\((.|[[:space:]])*\)" $1 \
+			| grep -vE "^[[:space:]]*static[[:space:]]+" \
+			| grep -vE "[[:space:]]*main\(" \
+			| sed "s/$/;/"
+			' _ {} \; \
 		>>${header_file}.h 2>/dev/null
 
 	printf "\n#endif\n" >>${header_file}.h

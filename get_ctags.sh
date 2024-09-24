@@ -1,12 +1,9 @@
 #! /bin/bash
 
-src_dir="$1"
-if [ -z "$src_dir" ]; then
-	src_dir="src"
-fi
+src_dir="${1:-src}"
+inc_dir="${2:-include}"
+libft_dir="${3:-libft}"
 
-inc_dir="includes"
-libft_dir="libft"
 
 if [ -d $src_dir ]; then
 
@@ -17,6 +14,7 @@ if [ -d $src_dir ]; then
 	if ctags --version 2>/dev/null | grep --quiet Exuberant; then
 		find -L ../${inc_dir} ../${src_dir} ../${libft_dir} -type f \( -name "*.c" -o -name "*.h" \) \
 			-exec ctags -a {} \;
+
 	elif ! ctags --version 2>/dev/null; then
 		find -L ../${inc_dir} ../${src_dir} ../${libft_dir}  -type f \( -name "*.c" -o -name "*.h" \) \
 			-exec sed -i "" 's/# define/#define/g' {} \; \

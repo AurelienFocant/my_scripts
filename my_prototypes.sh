@@ -1,6 +1,6 @@
 #!/bin/bash
 
-inc_dir="./includes"
+inc_dir="./include"
 project=$(echo "${PWD##*/}" | sed -E 's/[1-9]_//g')
 name="prototypes_${project}"
 header_file="${inc_dir}/${name}"
@@ -18,7 +18,7 @@ if [ -d  $src_dir ]; then
 
 	printf ${project} | awk '{print "# include " "\"" $0 ".h\""}' >>${header_file}.h
 
-# the rexeg doesnt work if theres a \n in the function name ---> norminette
+# the rexeg doesnt work if theres a \n in the function name because grep functions on a line by line basis
 	find $src_dir -type f -name "*.c" \
 		-exec sh -c \
 			'echo "\n/*----------------  ${1##*/}  ---------------*/"; \

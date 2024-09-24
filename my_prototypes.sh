@@ -34,3 +34,10 @@ if [ -d  $src_dir ]; then
 else
 	echo "There is no src directory"
 fi
+
+
+/******
+*
+* Credits to : Jveirman from 19 Brussels for the regex and the idea
+*
+******/

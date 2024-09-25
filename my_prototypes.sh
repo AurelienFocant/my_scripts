@@ -2,9 +2,9 @@
 
 inc_dir="./include"
 project=$(echo "${PWD##*/}" | sed -E 's/[1-9]_//g')
-name="prototypes_${project}"
-header_file="${inc_dir}/${name}"
-header_upper=$(echo ${name} | awk '{print toupper($0) }')
+filename="prototypes_${project}"
+header_file="${inc_dir}/${filename}"
+header_upper=$(echo ${filename} | awk '{print toupper($0) }')
 
 src_dir="$1"
 if [ -z "$src_dir" ]; then

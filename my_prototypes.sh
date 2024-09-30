@@ -36,8 +36,8 @@ else
 fi
 
 
-/******
-*
-* Credits to : Jveirman from 19 Brussels for the regex and the idea
-*
-******/
+# /******
+# *
+# * Credits to : Jveirman from 19 Brussels for the regex and the idea
+# *
+# ******/

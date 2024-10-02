@@ -1,4 +1,18 @@
-#!/bin/bash
+#!/bin/sh
+
+# /******
+# *
+# * Credits to : Jveirman from 19 Brussels for the regex and the idea
+# *
+# ******/
+
+# known issue: 
+	# doesnt work if there's a newline in the function name 
+	# because grep works on a line by line basis
+# known issue: 
+	# does not tab-align function names according to 19 norm
+	# ... I'm not good enough at AWK yet ...
+
 
 inc_dir="./include"
 project=$(echo "${PWD##*/}" | sed -E 's/[1-9]_//g')
@@ -11,14 +25,8 @@ if [ -z "$src_dir" ]; then
 	src_dir="./src"
 fi
 
-if [ -d  $src_dir ]; then 
 
-	[ ! -d ${inc_dir} ] && mkdir ${inc_dir}
-	printf "#ifndef ${header_upper}_H\n# define ${header_upper}_H\n\n" >${header_file}.h
-
-	printf ${project} | awk '{print "# include " "\"" $0 ".h\""}' >>${header_file}.h
-
-# the rexeg doesnt work if theres a \n in the function name because grep functions on a line by line basis
+function extract_prototypes {
 	find $src_dir -type f -name "*.c" \
 		-exec sh -c \
 			'echo "\n/*----------------  ${1##*/}  ---------------*/"; \
@@ -28,16 +36,23 @@ if [ -d  $src_dir ]; then
 			| sed "s/$/;/"
 			' _ {} \; \
 		>>${header_file}.h 2>/dev/null
+}
 
-	printf "\n#endif\n" >>${header_file}.h
+function create_prototype_file {
+		[ ! -d ${inc_dir} ] && mkdir ${inc_dir}
+		printf "#ifndef ${header_upper}_H\n# define ${header_upper}_H\n\n" >${header_file}.h
+		printf ${project} | awk '{print "# include " "\"" $0 ".h\""}' >>${header_file}.h
+		extract_prototypes
+		printf "\n#endif\n" >>${header_file}.h
+}
 
-else
-	echo "There is no src directory"
-fi
 
+function get_prototypes {
+	if [ -d  $src_dir ]; then 
+		create_prototype_file
+	else
+		echo "There is no src directory"
+	fi
+}
 
-# /******
-# *
-# * Credits to : Jveirman from 19 Brussels for the regex and the idea
-# *
-# ******/
+get_prototypes

@@ -1,63 +1,74 @@
-#!/bin/sh
+#################################################################################
+#			Sould be executed in the main directory of your C project			#
+#################################################################################
 
-# /******
-# *
-# * Credits to : Jveirman from 19 Brussels for the regex and the idea
-# *
-# ******/
+#################################################################################
+#	This script is intented to facilitate prototyping software in C				#
+#	Every time you write a new function, [in a new file],						#
+#	[In a new subdirectory], in your source files directory						#
+#	It will update (== create) a header file with all function prototypes.		#
+#	You can now just #include this prototype_file.h in your main header file	#
+#################################################################################
 
-# known issue: 
-	# doesnt work if there's a newline in the function name 
-	# because grep works on a line by line basis
-# known issue: 
-	# does not tab-align function names according to 19 norm
-	# ... I'm not good enough at AWK yet ...
+#!/bin/bash
 
+# You can specify the source files directory as 1st argument
+# If not, it will be called "src" by default
+src_dir="${1:-src}"
 
+# The name of the project is the name of the main directory
+# Bar some numbers that I use for faster shell completion
+project=$(echo "${PWD##*/}" | sed -E 's/^[1-9]_//g')
+
+# All header files to be in this directory
 inc_dir="./include"
-project=$(echo "${PWD##*/}" | sed -E 's/[1-9]_//g')
+
+# File names
 filename="prototypes_${project}"
 header_file="${inc_dir}/${filename}"
-header_upper=$(echo ${filename} | awk '{print toupper($0) }')
-
-src_dir="$1"
-if [ -z "$src_dir" ]; then
-	src_dir="./src"
-fi
+header_upper=$(echo "${filename}" | awk '{print toupper($0)}')
+last_subdir=""
 
 
 function extract_prototypes {
-    last_subdir=""
     find $src_dir -type f -name "*.c" | while read -r file; do
-        current_subdir=$(dirname "$file")  # Get the current subdirectory
-        current_subdir=${current_subdir##*/}  # Extract the last part of the path
+
+	 	# Get the current subdirectory
+        current_subdir=$(dirname "$file") 
 
         # Print the subdirectory name if it's different from the last one
+		# Update last printed subdirectory
         if [ "$current_subdir" != "$last_subdir" ]; then
-            echo "\n/*----------------  $current_subdir  ---------------*/"
-            last_subdir="$current_subdir"  # Update last printed subdirectory
+            printf "\n/*----------------  $current_subdir  ---------------*/\n"
+            last_subdir="$current_subdir"
         fi
         
         # Print the file name
-        echo "/* File: ${file##*/} */"
+        printf "/* File: ${file##*/} */\n"
         
         # Extract and print function prototypes from the current file
         grep -E "^[[:space:]]*([a-zA-Z_*]+[[:space:]]+){1,2}[a-zA-Z_*]+\((.|[[:space:]])*\)" "$file" \
-            | grep -vE "^[[:space:]]*static[[:space:]]+" \
-            | grep -vE "[[:space:]]*main\(" \
+            | grep -E -v "^[[:space:]]*static[[:space:]]+" \
+            | grep -E -v "[[:space:]]*main\(" \
             | sed "s/$/;/"
 
-		echo ""
+		# Print newline
+		printf "\n"
 
-    done >> "${header_file}.h" 2>/dev/null
+    done
 }
 
+
 function create_prototype_file {
-		[ ! -d ${inc_dir} ] && mkdir ${inc_dir}
-		printf "#ifndef ${header_upper}_H\n# define ${header_upper}_H\n\n" >${header_file}.h
-		printf ${project} | awk '{print "# include " "\"" $0 ".h\""}' >>${header_file}.h
-		extract_prototypes
-		printf "\n#endif\n" >>${header_file}.h
+	# Create ./include directory if it doesn't exist yet
+	[ -d ${inc_dir} ] || mkdir ${inc_dir}
+
+	printf "#ifndef ${header_upper}_H\n"	> ${header_file}.h
+	printf "# define ${header_upper}_H\n"	>>${header_file}.h
+	printf "\n"								>>${header_file}.h
+	printf "#include \"${project}.h\"\n"	>>${header_file}.h
+	extract_prototypes						>>${header_file}.h 2>/dev/null
+	printf "#endif\n"						>>${header_file}.h
 }
 
 
@@ -65,8 +76,30 @@ function get_prototypes {
 	if [ -d  $src_dir ]; then 
 		create_prototype_file
 	else
-		echo "There is no src directory"
+		echo "There is no source files directory"
 	fi
 }
 
 get_prototypes
+
+
+##############################################################################################################
+
+# /******
+# *
+# * Credit to : Jveirman from 19 Brussels for the regex and the idea
+# *
+# ******/
+
+# known issue: 
+	# doesnt work if there's a newline in the function name 
+	# because grep works on a line by line basis
+# known issue: 
+	# does not support embedded subdirectories
+# known issue: 
+	# in case of existing file with no elligible function
+	# eg file with only main function
+	# the header file will still write those file names
+# known issue: 
+	# does not tab-align function names according to 1942 norm
+	# ... I'm not good enough at AWK yet ...

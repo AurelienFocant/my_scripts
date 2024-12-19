@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #################################################################################
 #			Sould be executed in the main directory of your C project			#
 #################################################################################
@@ -10,7 +12,6 @@
 #	You can now just #include this prototype_file.h in your main header file	#
 #################################################################################
 
-#!/bin/bash
 
 # You can specify the source_files directory as 1st argument
 # If not, it will be called "src" by default
@@ -30,7 +31,7 @@ header_upper=$(echo "${filename}" | awk '{print toupper($0)}')
 last_subdir=""
 
 
-function extract_prototypes {
+extract_prototypes() {
     find $src_dir -type f -name "*.c" | while read -r file; do
 
 	 	# Get the current subdirectory
@@ -42,10 +43,10 @@ function extract_prototypes {
             printf "\n/*----------------  $current_subdir  ---------------*/\n"
             last_subdir="$current_subdir"
         fi
-        
+
         # Print the file name
         printf "/* File: ${file##*/} */\n"
-        
+
         # Extract and print function prototypes from the current file
         grep -E "^[[:space:]]*([a-zA-Z_*]+[[:space:]]+){1,2}[a-zA-Z_*]+\((.|[[:space:]])*\)" "$file" \
             | grep -E -v "^[[:space:]]*static[[:space:]]+" \
@@ -54,12 +55,11 @@ function extract_prototypes {
 
 		# Print newline
 		printf "\n"
-
     done
 }
 
 
-function create_prototype_file {
+create_prototype_file() {
 	# Create ./include directory if it doesn't exist yet
 	[ -d ${inc_dir} ] || mkdir ${inc_dir}
 
@@ -72,7 +72,7 @@ function create_prototype_file {
 }
 
 
-function get_prototypes {
+get_prototypes() {
 	if [ -d  $src_dir ]; then 
 		create_prototype_file
 	else

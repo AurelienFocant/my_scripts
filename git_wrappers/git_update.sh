@@ -13,6 +13,8 @@ else
 			cd $dir
 			git_fetch_and_status
 			cd ..
+		else
+			echo "not in a git repo"
 		fi
 	done
 fi

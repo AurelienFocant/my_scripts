@@ -42,10 +42,13 @@ git_check_branches () {
 git_fetch_and_status () {
     printf "\n"
 	print_pwd
-	git fetch
+	for remote in $(git remote -v | awk '{print $1}' | uniq); do
+		git fetch -v ${remote}
+		printf "\n"
+	done
 	git_status_colored_branch
-    printf "\n"
+	printf "\n"
 	git_check_branches
-    printf "%0.s$char" $(seq 1 "$len")
-    printf "\n"
+	printf "%0.s$char" $(seq 1 "$len")
+	printf "\n"
 }

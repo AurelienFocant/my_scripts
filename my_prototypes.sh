@@ -50,8 +50,8 @@ extract_prototypes() {
         # Extract and print function prototypes from the current file
         grep -E "^[[:space:]]*([0-9a-zA-Z_*]+[[:space:]]+){1,2}[0-9a-zA-Z_*]+\((.|[[:space:]])*\)" "$file" \
             | grep -E -v "[[:space:]]*main\(" \
+			| grep -E -v "^[[:space:]]*static[[:space:]]+" \
             | sed "s/$/;/"
-		#	| grep -E -v "^[[:space:]]*static[[:space:]]+" \
 
 		# Print newline
 		printf "\n"

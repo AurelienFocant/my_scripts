@@ -32,7 +32,7 @@ last_subdir=""
 
 
 extract_prototypes() {
-    find $src_dir -type f -name "*.c" | while read -r file; do
+    find $src_dir -type f | sort | while read -r file; do
 
 	 	# Get the current subdirectory
         current_subdir=$(dirname "$file") 

@@ -28,7 +28,7 @@ print_pwd () {
 }
 
 git_check_branches () {
-	git branch -vv --color=always | awk '
+	git branch -avv --color=always | awk '
 	{
 		if ($0 ~ /\[.*(ahead|behind|diverge).*]/) {
 			sub(/\] .*/, "] \033[31mthis branch is not in sync with its remote\033[0m");
